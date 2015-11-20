@@ -1,7 +1,7 @@
 Proxmox LXC template
 ====================
 
-Proxmox LXC Templates using Debian Appliance Builder (DAB)
+Create Proxmox LXC Templates using Debian Appliance Builder (DAB)
 
 ## Creates a Container Template
 
