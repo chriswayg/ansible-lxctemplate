@@ -1,0 +1,39 @@
+---
+# defaults file for chriswayg.lxctemplate
+
+## variables for template creation
+lxctemplate_make: true
+lxctemplate_keepcached: true
+
+lxctemplate_bootstrap_options: "--minimal"
+lxctemplate_install: psmisc python
+lxctemplate_remove:  postfix
+
+lxctemplate_distro: debian-8.0
+lxctemplate_dab:
+  suite:        jessie
+  architecture: amd64
+  name:         minimal
+  version:      8.2-1
+  maintainer:   User <user@example.org>
+  infopage:     https://pve.proxmox.com/wiki/Debian_Appliance_Builder
+  description_short: "{{ lxctemplate_distro }} {{ lxctemplate_dab.name }}"
+  description_extended: ""
+
+lxctemplate_builds:   /var/lib/vz/template/builds
+lxctemplate_storage:  /var/lib/vz/template/cache
+lxctemplate_dir:      "{{ lxctemplate_distro }}-{{ lxctemplate_dab.name }}-{{ lxctemplate_dab.architecture }}"
+
+## variables for container creation
+lxctemplate_container: false
+
+lxctemplate_vmid:       "201"
+lxctemplate_password:   lxctemplate123
+lxctemplate_hostname:   "{{ lxctemplate_dab.suite }}"
+lxctemplate_memory:     "512"
+lxctemplate_ip:         "10.10.10.{{ lxctemplate_vmid }}/24"
+lxctemplate_gateway:    "10.10.10.1"
+lxctemplate_bridge:     vmbr0
+lxctemplate_storeon:    containers
+lxctemplate_description: "{{ description_short }}"
+lxctemplate_file:        "{{ lxctemplate_distro }}-{{ lxctemplate_dab.name }}_{{ lxctemplate_dab.version }}_{{ lxctemplate_dab.architecture }}.tar.gz"

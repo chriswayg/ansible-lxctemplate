@@ -1,0 +1,70 @@
+---
+# tasks file for chriswayg.lxctemplate
+
+- name: Install Debian Appliance Builder (DAB)
+  apt:
+    pkg: dab
+    update_cache: yes
+    state: installed
+
+- name: Create a build directory
+  file: 
+    path: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+    state: directory
+
+- name: Upload dab.conf from template
+  template:
+    src: dab.conf.j2
+    dest: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}/dab.conf"
+
+- name: DAB initialize
+  shell: dab init
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+
+- name: Use this command on the server to see progress of DAB bootstrap
+  debug: msg="tail -f {{ lxctemplate_builds }}/{{ lxctemplate_dir }}/logfile"
+
+- name: DAB Bootstrap the template (this takes a while)
+  shell: dab bootstrap {{ lxctemplate_bootstrap_options }}
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+
+- name: DAB install packages
+  shell: dab install {{ lxctemplate_install }}
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+
+- name: DAB remove packages
+  shell: dab exec apt-get -y purge {{ lxctemplate_remove }}
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+
+- name: SSHD Permit Root Login
+  lineinfile: 
+    dest: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}/rootfs/etc/ssh/sshd_config"
+    regexp: "^PermitRootLogin"
+    line: "PermitRootLogin yes"
+
+- name: DAB finalize the template
+  shell: dab finalize
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+
+- name: Move the template into place
+  shell: mv -v {{ lxctemplate_distro }}-{{ lxctemplate_dab.name }}_{{ lxctemplate_dab.version }}_{{ lxctemplate_dab.architecture }}.tar.gz {{ lxctemplate_storage }}/
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+    creates: "{{ lxctemplate_storage }}/{{ lxctemplate_distro }}-{{ lxctemplate_dab.name }}_{{ lxctemplate_dab.version }}_{{ lxctemplate_dab.architecture }}.tar.gz"
+
+- name: DAB cleanup build files, keep cached packages
+  shell: dab clean
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+  when: lxctemplate_keepcached
+
+- name: DAB cleanup build files, remove cached packages
+  shell: dab dist-clean
+  args:
+    chdir: "{{ lxctemplate_builds }}/{{ lxctemplate_dir }}"
+  when: not lxctemplate_keepcached

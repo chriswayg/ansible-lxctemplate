@@ -1,0 +1,6 @@
+---
+# tasks file for chriswayg.lxctemplate
+
+# pct man page: https://pve.proxmox.com/wiki/Manual:_pct
+- name: Create a container from template
+  shell: pct create {{ lxctemplate_vmid }} {{ lxctemplate_storage }}/{{ lxctemplate_file }} -description "{{ lxctemplate_description }}" -hostname {{ lxctemplate_hostname }} -memory {{ lxctemplate_memory }} -net0 name=eth0,ip={{ lxctemplate_ip }},gw={{ lxctemplate_gateway }},bridge={{ lxctemplate_bridge }} -storage {{ lxctemplate_storeon }} -password {{ lxctemplate_password }}

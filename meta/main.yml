@@ -1,0 +1,19 @@
+---
+galaxy_info:
+  author: Christian Wagner <chriswayg@gmail.com>
+  description: Create and Install Proxmox 4 LXC Templates using Debian Appliance Builder (DAB)
+
+  license: license (GPLv2)
+
+  min_ansible_version: 1.2
+
+  # Proxmox 4
+  platforms:
+  - name: Debian
+    versions:
+    - jessie
+
+  categories:
+  - cloud
+  - development
+  - packaging

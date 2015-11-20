@@ -1,0 +1,8 @@
+---
+# tasks file for chriswayg.lxctemplate
+
+- include: maketemplate.yml
+  when: lxctemplate_make
+
+- include: container.yml
+  when: lxctemplate_container
